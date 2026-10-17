@@ -2,6 +2,7 @@
 #define LITTLE_PENGUIN_CONFIG_H
 
 #include <stddef.h>
+#include "platform.h"
 
 #define MAX_INPUT 255
 #define MAX_HISTORY 50

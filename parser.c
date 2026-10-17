@@ -2,25 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include "config.h"
+#include "fs.h"
 
 void process_command(const char *input, int *running) {
+    /* Filesystem commands are handled by their own module. */
+    if (fs_handle_command(input))
+        return;
+
     if (strcmp(input, "help") == 0) {
-#ifdef _WIN32
-        system("cls");
-#else
-        system("clear");
-#endif
+        clearScreen();
         showHelp();
     }
     else if (strcmp(input, "clear") == 0) {
         clearScreen();
     }
     else if (strcmp(input, "man") == 0) {
-#ifdef _WIN32
-        system("cls");
-#else
-        system("clear");
-#endif
+        clearScreen();
         Emanuel();
     }
     else if (strcmp(input, "calc") == 0) {
@@ -85,19 +82,11 @@ void process_command(const char *input, int *running) {
         shell_interface();
     }
     else if (strcmp(input, "panic") == 0) {
-#ifdef _WIN32
-        system("cls");
-#else
-        system("clear");
-#endif
+        clearScreen();
         BSP();
     }
     else if (strcmp(input, "exit") == 0 || strcmp(input, "leave") == 0) {
-#ifdef _WIN32
-        system("cls");
-#else
-        system("clear");
-#endif
+        clearScreen();
         setColor();
         printf("Exiting Kernel\n");
         printf("Or stopping it for safety reasons\n");

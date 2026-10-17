@@ -1,8 +1,7 @@
-#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include "config.h"
+#include "platform.h"
 
 void BSP(void) {
     setColor();
@@ -19,6 +18,8 @@ void bootScreen(void) {
 }
 
 void loadingScreen(void) {
+    int i;
+
     clearScreen();
     setColor();
     printf("\n\n");
@@ -32,13 +33,13 @@ void loadingScreen(void) {
     printf("     Loading");
     fflush(stdout);
 
-    for (int i = 0; i < 5; i++) {
-        usleep(400000);
+    for (i = 0; i < 5; i++) {
+        platform_sleep_ms(400);
         printf(".");
         fflush(stdout);
     }
 
     printf("\n");
-    usleep(300000);
+    platform_sleep_ms(300);
     resetColor();
 }

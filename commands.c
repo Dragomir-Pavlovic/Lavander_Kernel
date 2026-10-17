@@ -19,6 +19,18 @@ void showHelp(void) {
     printf("█▒panic             - Turns off bash script if user or system makes an error █▒\n");
     printf("█▒bbtbs             - Bringing back user to beginning screen of bash script  █▒\n");
     printf("█▒exit              - Shutdown                                               █▒\n");
+    printf("█▒%-75s█▒\n", "FILE SYSTEM COMMANDS:");
+    printf("█▒%-75s█▒\n", "mkdir PATH         - create a directory (a/b/c is allowed)");
+    printf("█▒%-75s█▒\n", "rmdir PATH         - remove an empty directory");
+    printf("█▒%-75s█▒\n", "rm [-r] PATH       - delete a file, or a directory with rm -r");
+    printf("█▒%-75s█▒\n", "ls / dir [PATH]    - list what is inside a directory");
+    printf("█▒%-75s█▒\n", "pwd                - show the directory you are in");
+    printf("█▒%-75s█▒\n", "cd [PATH]          - change directory, '..' goes up, 'cd' = home");
+    printf("█▒%-75s█▒\n", "touch FILE         - create an empty text file");
+    printf("█▒%-75s█▒\n", "cat FILE           - print the contents of a file");
+    printf("█▒%-75s█▒\n", "write FILE TEXT    - create or overwrite a file with one line");
+    printf("█▒%-75s█▒\n", "edit FILE          - open the built-in line editor");
+    printf("█▒%-75s█▒\n", "mv SRC DST         - move or rename files and directories");
     printf("██████████████████████████████████████████████████████████████████████████████▒\n");
     printf(" ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n");
     resetColor();

@@ -1,36 +1,9 @@
-#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <termios.h>
-#include <fcntl.h>
 #include <time.h>
 #include "config.h"
-
-static int kbhit(void)
-{
-    struct termios oldt, newt;
-    int ch, oldf;
-
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-
-    ch = getchar();
-
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    fcntl(STDIN_FILENO, F_SETFL, oldf);
-
-    if (ch != EOF) {
-        ungetc(ch, stdin);
-        return 1;
-    }
-    return 0;
-}
+#include "platform.h"
 
 void pake(void)
 {
@@ -38,8 +11,8 @@ void pake(void)
     const int height = 25;
     const char *head = ":D";
     const char *body = "o";
-    const char *food = "🮆";
-    const char *wall = "█";
+    const char *food = "\xE2\x96\x86"; /* U+2586 as UTF-8 bytes */
+    const char *wall = "\xE2\x96\x88"; /* U+2588 as UTF-8 bytes */
 
     int x = width / 2;
     int y = height / 2;
@@ -94,8 +67,8 @@ void pake(void)
         putchar('\n');
         resetColor();
 
-        if (kbhit()) {
-            int c = getchar();
+        if (platform_kbhit()) {
+            int c = platform_getch();
             if (c == 'q' || c == 'Q')
                 break;
             if (c == 'a' || c == 'A')
@@ -144,7 +117,7 @@ void pake(void)
                 break;
         }
 
-        usleep(120000);
+        platform_sleep_ms(120);
     }
 
     clearScreen();

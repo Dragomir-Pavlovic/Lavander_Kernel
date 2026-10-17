@@ -1,10 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 #include "config.h"
+#include "platform.h"
+#include "fs.h"
 
 int main(void) {
     char input[MAX_INPUT];
     int running = 1;
+
+    platform_init();
+    fs_init();
 
     setColor();
     loadingScreen();

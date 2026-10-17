@@ -1,20 +1,24 @@
-#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include "config.h"
+#include "platform.h"
 
 void showcase_of_working_proces_in_background(void) {
     time_t t = time(NULL);
     struct tm *tm_info = localtime(&t);
-    FILE *f;
-    char line[256];
-    char os_name[128] = "Linux";
-    char kernel[128] = "Unknown";
-    char arch[64] = "Unknown";
-    char cpu[128] = "Unknown";
-    unsigned long long total = 0;
-    unsigned long long available = 0;
+    unsigned long long uptime;
+    unsigned long long total_mb = 0;
+    unsigned long long available_mb = 0;
+    char os_name[128];
+    char kernel[128];
+    char arch[64];
+    char cpu[128];
+
+    platform_os_name(os_name, sizeof(os_name));
+    platform_kernel_version(kernel, sizeof(kernel));
+    platform_architecture(arch, sizeof(arch));
+    platform_cpu_model(cpu, sizeof(cpu));
 
     setColor();
     printf("\n");
@@ -39,84 +43,30 @@ void showcase_of_working_proces_in_background(void) {
     printf(" █▒    ██╔╝ ██║ ██╔════╝ ██╔══██║ ████╗  ██║ ██╔════╝ ██║                               ▒█▒\n");
     printf(" █▒    █████╔═╝ █████╗   █████╔═╝ ██╔██╗ ██║ █████╗   ██║                               ▒█▒\n");
     printf(" █▒    ██║ ██╗  ██╔══╝   ██╔╗██╗  ██║╚██╗██║ ██╔══╝   ██║                               ▒█▒\n");
-    printf(" █▒    ██║  ██╗ ███████║ ██║ ║██║ ██║ ╚████║ ███████║ ███████║                          ▒█▒\n");    
+    printf(" █▒    ██║  ██╗ ███████║ ██║ ║██║ ██║ ╚████║ ███████║ ███████║                          ▒█▒\n");
     printf(" █▒    ╚══════╝ ╚══════╝ ╚═╝ ╚══╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝                          ▒█▒\n");
     printf(" █▒                                                                                     ▒█▒\n");
     printf(" █████████████████████████████████████████████████████████████████████████████████████████▒\n");
     printf("  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n");
 
-    f = fopen("/etc/os-release", "r");
-    if (f) {
-        while (fgets(line, sizeof(line), f)) {
-            if (strncmp(line, "PRETTY_NAME=", 12) == 0) {
-                char *p = line + 12;
-                if (*p == '"') p++;
-                strncpy(os_name, p, sizeof(os_name) - 1);
-                os_name[sizeof(os_name) - 1] = '\0';
-                os_name[strcspn(os_name, "\n")] = 0;
-                if (os_name[strlen(os_name) - (strlen(os_name) > 0 ? 1 : 0)] == '"' && strlen(os_name) > 0)
-                    os_name[strlen(os_name) - 1] = '\0';
-                break;
-            }
-        }
-        fclose(f);
-    }
-
     printf("  OS:          %s\n", os_name);
-
-    f = fopen("/proc/version", "r");
-    if (f) {
-        if (fgets(line, sizeof(line), f))
-            sscanf(line, "Linux version %127s", kernel);
-        fclose(f);
-    }
     printf("  Kernel:      %s\n", kernel);
     printf("  Shell:       LAVANDER SHELL\n");
-
-    f = popen("uname -m", "r");
-    if (f) {
-        if (fgets(arch, sizeof(arch), f))
-            arch[strcspn(arch, "\n")] = 0;
-        pclose(f);
-    }
     printf("  Architecture: %s\n", arch);
 
-    if (tm_info != NULL) {
-        printf("  Uptime:      %02d:%02d:%02d\n", tm_info->tm_hour, tm_info->tm_min, tm_info->tm_sec);
-        printf("  Date:        %02d-%02d-%d\n", tm_info->tm_mday, tm_info->tm_mon + 1, tm_info->tm_year + 1900);
-    }
+    uptime = platform_uptime_seconds();
+    printf("  Uptime:      %02llu:%02llu:%02llu\n", uptime / 3600ULL,
+           (uptime / 60ULL) % 60ULL, uptime % 60ULL);
 
-    f = fopen("/proc/meminfo", "r");
-    if (f) {
-        while (fgets(line, sizeof(line), f)) {
-            if (sscanf(line, "MemTotal: %llu kB", &total) == 1) continue;
-            if (sscanf(line, "MemAvailable: %llu kB", &available) == 1) continue;
-        }
-        fclose(f);
-    }
+    if (tm_info != NULL)
+        printf("  Date:        %02d-%02d-%d\n", tm_info->tm_mday,
+               tm_info->tm_mon + 1, tm_info->tm_year + 1900);
 
-    if (total > 0)
-        printf("  Memory:      %llu MB / %llu MB\n", (total - available) / 1024, total / 1024);
+    if (platform_memory_info(&total_mb, &available_mb) == 0 && total_mb > 0)
+        printf("  Memory:      %llu MB / %llu MB\n", total_mb - available_mb,
+               total_mb);
     else
         printf("  Memory:      Unknown\n");
-
-    f = fopen("/proc/cpuinfo", "r");
-    if (f) {
-        while (fgets(line, sizeof(line), f)) {
-            if (strncmp(line, "model name", 10) == 0) {
-                char *p = strchr(line, ':');
-                if (p) {
-                    p++;
-                    while (*p == ' ') p++;
-                    strncpy(cpu, p, sizeof(cpu) - 1);
-                    cpu[sizeof(cpu) - 1] = '\0';
-                    cpu[strcspn(cpu, "\n")] = 0;
-                    break;
-                }
-            }
-        }
-        fclose(f);
-    }
 
     printf("  CPU:         %s\n", cpu);
     printf("  Status:      Running\n\n");
@@ -124,26 +74,17 @@ void showcase_of_working_proces_in_background(void) {
 }
 
 void free_memory_in_well_memory_ofc(void) {
+    unsigned long long total_mb = 0;
+    unsigned long long available_mb = 0;
+
     setColor();
-#if defined(__linux__)
-    FILE *memory_file = fopen("/proc/meminfo", "r");
-    char line[128];
-    unsigned long long total = 0;
-    unsigned long long available = 0;
 
-    if (memory_file != NULL) {
-        while (fgets(line, sizeof(line), memory_file) != NULL) {
-            if (sscanf(line, "MemTotal: %llu kB", &total) == 1) continue;
-            if (sscanf(line, "MemAvailable: %llu kB", &available) == 1) continue;
-        }
-        fclose(memory_file);
-    }
-
-    if (total > 0) {
+    if (platform_memory_info(&total_mb, &available_mb) == 0 && total_mb > 0) {
         printf("██████████████████████████████████████████████\n");
         printf("█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒\n");
         printf("█▒                                           █▒\n");
-        printf("█▒ Memory: %llu MB total, %llu MB available █▒\n", total / 1024, available / 1024);
+        printf("█▒ Memory: %llu MB total, %llu MB available █▒\n", total_mb,
+               available_mb);
         printf("█▒                                           █▒\n");
         printf("█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒\n");
         printf("██████████████████████████████████████████████▒\n");
@@ -151,8 +92,6 @@ void free_memory_in_well_memory_ofc(void) {
     } else {
         printf("Memory information is unavailable.\n");
     }
-#else
-    printf("Memory information is unavailable on this platform.\n");
-#endif
+
     resetColor();
 }

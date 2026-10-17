@@ -1,3 +1,14 @@
+/*
+ * LEGACY FILE - kept only as a historical reference of the original
+ * single-file version of the shell. It contains its own main() and
+ * duplicates every symbol from the modular files (config.c, parser.c,
+ * monitor.c, ...), so it is excluded from the normal build.
+ *
+ * To build it standalone, set the switch below to 1 and compile ONLY this
+ * file, e.g.:  gcc shell.c -o legacy-shell
+ */
+#if 0
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -667,4 +678,5 @@ resetColor();
 resetColor();
 return 0;
 }
+#endif /* legacy single-file build */
 
