@@ -1,9 +1,11 @@
-# Lavander_Shell_and_SLM
-Bash shell script that run several things, one of them is SLM (Small learning model) that can chat with you, and speak in 16-bit voice
-
-Bash shell is writen in C language and SLM in python. Bought can be run as a terminal command. Running pyscript for SLM opens a tiny window, where SLM model lives. It can be also embedded in raspberry pi.
+# LAVANDER KERNEL SANDBOX
+Lavander kernel as a sandbox that run several things is writen in C language.
+It is an windows application and linux bash script command that can be run as a terminal command.
+It is a simulation or better said a sandbox that show's people how unix like sistem can run.
+This project is for now just a sandbox, before WE make it to run as a real kernel.
 
 Enjoy using it.
+Have fun.
 
 ## Supported platforms
 
@@ -129,12 +131,3 @@ mv projects/alpha/todo.txt ./   # move it to the root
 cat todo.txt
 rm -r projects                  # delete the whole tree
 ```
-
-## The SLM (Python)
-
-```sh
-python littlepenguin.py
-```
-
-Requires `tkinter` and `pillow`. It is written with portable APIs only
-(`tkinter`, `PIL`, `os.path`), so it works on Linux and Windows unchanged.
