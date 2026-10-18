@@ -31,6 +31,11 @@ void showHelp(void) {
     printf("█▒%-75s█▒\n", "write FILE TEXT    - create or overwrite a file with one line");
     printf("█▒%-75s█▒\n", "edit FILE          - open the built-in line editor");
     printf("█▒%-75s█▒\n", "mv SRC DST         - move or rename files and directories");
+    printf("█▒%-75s█▒\n", "GAME COMMANDS:");
+    printf("█▒%-75s█▒\n", "games              - open the game selection menu");
+    printf("█▒%-75s█▒\n", "snake              - play the bundled snake (lavander_games)");
+    printf("█▒%-75s█▒\n", "tetris             - play the bundled tetris (lavander_games)");
+    printf("█▒%-75s█▒\n", "wildbound          - not implemented yet");
     printf("██████████████████████████████████████████████████████████████████████████████▒\n");
     printf(" ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n");
     resetColor();

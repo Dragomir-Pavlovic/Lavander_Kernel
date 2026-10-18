@@ -26,7 +26,7 @@ void loadingScreen(void) {
     printf(" █████████████████████████████████████\n");
     printf(" █▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒\n");
     printf(" █▒                                  █▒\n");
-    printf(" █▒     LITTLE PENGUIN KERNEL        █▒\n");
+    printf(" █▒   ## -- LAVANDER KERNEL -- ##    █▒\n");
     printf(" █▒                                  █▒\n");
     printf(" █████████████████████████████████████▒\n");
     printf("  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n\n");

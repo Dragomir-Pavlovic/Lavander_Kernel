@@ -1,11 +1,9 @@
-# LAVANDER KERNEL SANDBOX
-Lavander kernel as a sandbox that run several things is writen in C language.
-It is an windows application and linux bash script command that can be run as a terminal command.
-It is a simulation or better said a sandbox that show's people how unix like sistem can run.
-This project is for now just a sandbox, before WE make it to run as a real kernel.
+# Lavander_Shell_and_SLM
+Bash shell script that run several things, one of them is SLM (Small learning model) that can chat with you, and speak in 16-bit voice
+
+Bash shell is writen in C language and SLM in python. Bought can be run as a terminal command. Running pyscript for SLM opens a tiny window, where SLM model lives. It can be also embedded in raspberry pi.
 
 Enjoy using it.
-Have fun.
 
 ## Supported platforms
 
@@ -27,15 +25,26 @@ from the same source code. All operating system specific code lives in one file,
 | Uptime                 | `/proc/uptime`                | `GetTickCount64`                     |
 
 On Windows the console is switched to UTF-8 at startup, so the box drawing and
-block characters of the menus and of the PAKE (snake) game render correctly.
+block characters of the menus and of the bundled games render correctly.
 
 ## Building the kernel
+
+The build produces **two programs**: the kernel itself and the bundled snake
+game, which lands in a `lavander_games` directory:
+
+| Program                | Linux                          | Windows                          |
+| ---------------------- | ------------------------------ | -------------------------------- |
+| the kernel             | `./lavander`                   | `lavander.exe`                   |
+| the bundled snake      | `lavander_games/snake.game`    | `lavander_games\snake.game.exe`  |
+| the bundled tetris     | `lavander_games/tetris.game`   | `lavander_games\tetris.game.exe` |
 
 ### Linux
 
 ```sh
-make            # builds ./lavander
-make run        # build and start
+make            # builds ./lavander and both games in lavander_games/
+make kernel     # kernel only
+make games      # games only
+make run        # build and start the kernel
 make clean
 ```
 
@@ -52,14 +61,21 @@ build.bat       :: picks gcc automatically, falls back to cl.exe
 Or by hand from an MSYS2 / MinGW shell:
 
 ```sh
-make            # builds lavander.exe
+make            # builds lavander.exe and both games in lavander_games\
 ```
 
 Or manually:
 
 ```bat
+mkdir lavander_games
 gcc -std=c11 -Wall -Wextra -O2 *.c -o lavander.exe -ladvapi32
+gcc -std=c11 -Wall -Wextra -O2 -I. games\snake_game.c  platform.c -o lavander_games\snake.game.exe  -ladvapi32
+gcc -std=c11 -Wall -Wextra -O2 -I. games\tetris_game.c platform.c -o lavander_games\tetris.game.exe -ladvapi32
 ```
+
+The game sources live in `games/`, so a plain `gcc *.c` build only ever
+produces the kernel - every game has its own `main()` and is always built as a
+separate program.
 
 Note: `shell.c` is the old single file version of the project, kept only as a
 reference. It is disabled by default (its `#if 0` block) so it can never clash
@@ -131,3 +147,131 @@ mv projects/alpha/todo.txt ./   # move it to the root
 cat todo.txt
 rm -r projects                  # delete the whole tree
 ```
+
+## The games (`snake.game`, `tetris.game`)
+
+The build ships two classic terminal games as separate programs, in the
+default `lavander_games` directory:
+
+```
+lavander_games/
+    snake.game      tetris.game          Linux
+    snake.game.exe  tetris.game.exe      Windows
+```
+
+They only depend on the portability layer (`platform.c`), so the same sources
+(`games/snake_game.c`, `games/tetris_game.c`) build and play on both systems.
+
+### Starting them
+
+| Where                    | What to do                                             |
+| ------------------------ | ------------------------------------------------------ |
+| from the kernel shell    | type `snake` or `tetris` (it starts `lavander_games/...` for you) |
+| from the games menu      | type `games`, then `1` for tetris or `2` for snake     |
+| on its own, Windows      | `lavander_games\tetris.game.exe` (in PowerShell: `lavander_games\tetris.game`) |
+| on its own, Linux        | `./lavander_games/snake.game`                          |
+
+`pake` still works as a command: it now starts the snake game, because the old
+pake penguin game was removed and replaced by it.
+
+Start the kernel from the directory that contains `lavander_games`, otherwise
+the game commands report that the game was not found and tell you to build it
+with `make` / `build.bat`.
+
+### Snake
+
+```
+ SNAKE   Score: 30   Len: 6
+ █████████████████
+█               █
+█      ooooo@   █
+█               █
+█               █
+█        *      █
+█               █
+█               █
+█               █
+█               █
+█               █
+█               █
+█               █
+█               █
+█               █
+█               █
+█               █
+ █████████████████
+ W/A/S/D move   R restart   Q quit
+```
+
+- `W A S D` or the arrow keys - steer
+- `Q` or `Esc` - quit immediately
+- eat `*` to grow and score 10 points, every bite makes the snake a bit faster
+- hitting a wall or your own body ends the round (the tail cell you are moving
+  into is still free, as in the classic game)
+- filling the whole field wins the game
+- after a round: `R` plays again, `Enter` leaves
+
+### Tetris
+
+```
+ TETRIS
+ █████████████████████  NEXT
+█                    █  ██
+█                    █  ██
+█                    █
+█                    █
+█                    █
+█                    █  Score
+█                    █  1240
+█                    █  Lines
+█                    █  8
+█                    █  Level
+█                    █  2
+█                    █
+█                    █  A/D move
+█                    █  W rotate
+█      ▓▓▓▓          █  S soft drop
+█      ▓▓▓▓          █  Space drop
+█                    █  Q quit
+█            ██████  █
+█  ██████████████    █
+█████████████████    █
+ █████████████████████
+```
+
+- `A` / `D` or `Left` / `Right` - move
+- `W` or `Up` - rotate (with wall kicks)
+- `S` or `Down` - soft drop (+1 point per cell)
+- `Space` - hard drop (+2 points per cell)
+- `Q` or `Esc` - quit immediately
+- 10x20 field, the seven pieces come in shuffled bags of seven
+- 1 line 100, 2 lines 300, 3 lines 500, 4 lines 800 - all multiplied by the
+  level; a new level every 10 lines and the pieces fall faster each level
+- the falling piece is drawn darker than the locked ones, `NEXT` shows the
+  upcoming piece, cleared lines flash before they disappear
+- a short lock delay lets you slide the piece after it lands
+- after a round: `R` plays again, `Enter` leaves
+
+### Window size
+
+Both games draw a picture that never wraps and never scrolls, so they need a
+console of at least **36 x 23** characters (tetris) or **36 x 20** (snake):
+
+- on Windows the console window is enlarged automatically when it is too small
+- on other terminals the game stops and asks you to resize the window and then
+  press `Enter`; the size is checked again during play, so shrinking the
+  window in the middle of a round pauses the game until it fits again
+
+Everything (score, level, next piece, controls) is kept beside the board in
+short columns for exactly this reason - one long header line would break the
+whole picture in a small window.
+
+
+## The SLM (Python)
+
+```sh
+python littlepenguin.py
+```
+
+Requires `tkinter` and `pillow`. It is written with portable APIs only
+(`tkinter`, `PIL`, `os.path`), so it works on Linux and Windows unchanged.

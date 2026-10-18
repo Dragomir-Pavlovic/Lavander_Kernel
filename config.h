@@ -7,7 +7,6 @@
 #define MAX_INPUT 255
 #define MAX_HISTORY 50
 
-void pake(void);
 void setColor(void);
 void resetColor(void);
 void clearScreen(void);
@@ -27,6 +26,10 @@ void Emanuel(void);
 
 void GameSelectionScreen(void);
 void GameSelectionScreenWithDefault(const char *default_input);
+
+/* Starts a bundled game program (returns 0 on success). */
+int launch_snake_game(void);
+int launch_tetris_game(void);
 
 void add_history(const char *command);
 

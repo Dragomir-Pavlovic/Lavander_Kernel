@@ -1,6 +1,55 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "config.h"
+#include "platform.h"
+#include "snake_game.h"
+#include "tetris_game.h"
+
+/*
+ * Starts a bundled game that ships with the build. The games live in the
+ * "lavander_games" directory:
+ *     lavander_games/snake.game        lavander_games/tetris.game       (Linux)
+ *     lavander_games\snake.game.exe    lavander_games\tetris.game.exe   (Windows)
+ * Returns 0 when the game ran, -1 when it could not be started.
+ */
+static int start_game(const char *linux_path, const char *windows_path,
+                      const char *name)
+{
+#ifdef _WIN32
+    const char *path = windows_path;
+#else
+    const char *path = linux_path;
+#endif
+    int result;
+
+    (void)linux_path;
+    (void)windows_path;
+
+    if (!platform_path_exists(path)) {
+        printf("[GAME] %s was not found: %s\n", name, path);
+        printf("       Build it first with:  make   or   build.bat\n");
+        printf("       Press Enter to continue...");
+        fflush(stdout);
+        (void)getchar();
+        return -1;
+    }
+
+    result = system(path);
+    return (result == 0) ? 0 : -1;
+}
+
+int launch_snake_game(void)
+{
+    return start_game("./lavander_games/snake.game",
+                      "lavander_games\\snake.game.exe", "snake.game");
+}
+
+int launch_tetris_game(void)
+{
+    return start_game("./lavander_games/tetris.game",
+                      "lavander_games\\tetris.game.exe", "tetris.game");
+}
 
 void GameSelectionScreenWithDefault(const char *default_input)
 {
@@ -58,20 +107,12 @@ void GameSelectionScreenWithDefault(const char *default_input)
         }
 
         if (strcmp(input, "1") == 0 || strcmp(input, "tetris") == 0) {
-            printf("\n[GAME] Tetris nije implementiran.\n");
-            printf("[GAME] Press 'q' to return.\n");
-            while (1) {
-                if (fgets(q, sizeof(q), stdin) == NULL)
-                    return;
-                q[strcspn(q, "\n")] = 0;
-                if (strcmp(q, "q") == 0 || strcmp(q, "Q") == 0)
-                    break;
-            }
+            launch_tetris_game();
         }
         else if (strcmp(input, "2") == 0 ||
                  strcmp(input, "snake") == 0 ||
                  strcmp(input, "pake") == 0) {
-            pake();
+            launch_snake_game();
         }
         else if (strcmp(input, "3") == 0 ||
                  strcmp(input, "wildbound") == 0 ||

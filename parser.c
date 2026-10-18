@@ -42,8 +42,9 @@ void process_command(const char *input, int *running) {
         bbtbs();
     }
     else if (strcmp(input, "pake") == 0) {
-	    pake();
-	    bootScreen();
+        /* the old pake penguin game was replaced by snake.game */
+        launch_snake_game();
+        bootScreen();
     }
     else if (strncmp(input, "echo ", 5) == 0) {
         printf("%s\n", input + 5);
@@ -52,8 +53,15 @@ void process_command(const char *input, int *running) {
         GameSelectionScreenWithDefault(NULL);
         bootScreen();
     }
-    else if (strcmp(input, "tetris") == 0 || strcmp(input, "snake") == 0 ||
-             strcmp(input, "pake") == 0 || strcmp(input, "wildbound") == 0) {
+    else if (strcmp(input, "snake") == 0) {
+        launch_snake_game();
+        bootScreen();
+    }
+    else if (strcmp(input, "tetris") == 0) {
+        launch_tetris_game();
+        bootScreen();
+    }
+    else if (strcmp(input, "wildbound") == 0) {
         GameSelectionScreenWithDefault(input);
         bootScreen();
     }
@@ -63,10 +71,16 @@ void process_command(const char *input, int *running) {
         setColor();
         printf("███████████████████████████████████████████████████████\n");
         printf("█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒\n");
-        printf("█▒ Project made by: Dragomir Pavlovic                 █▒\n");
-        printf("█▒ To contact creator: dragomirpavlovic20@gmail.com   █▒\n");
-        printf("█▒ Project: TINY KERNEL AND FIELD COMPUTER            █▒\n");
+        printf("█▒                                                    █▒\n");  
+        printf("█▒ Project made by: Lavander Development Group        █▒\n");
+        printf("█▒ Developers:                                        █▒\n");
+        printf("█▒ Developer: Dragomir Pavlovic                       █▒\n");
+        printf("█▒ Developer: Bogdan Barjaktarovic                    █▒\n");
+        printf("█▒ To contact us: lavander.dev.group@proton.me        █▒\n");
+        printf("█▒ Project: LAVANDER KERNEL AND CAT OS                █▒\n");
+        printf("█▒ Purpose: Scientifical and educational use          █▒\n");
         printf("█▒ To exit press 'q'                                  █▒\n");
+        printf("█▒                                                    █▒\n");
         printf("███████████████████████████████████████████████████████▒\n");
         printf(" ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n");
 

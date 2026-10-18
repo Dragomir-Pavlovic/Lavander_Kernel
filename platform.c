@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 #include <sys/utsname.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -103,7 +104,15 @@ void platform_clear_screen(void)
         return;
 
     if (GetConsoleScreenBufferInfo(handle, &info)) {
-        cells = (DWORD)info.dwSize.X * (DWORD)info.dwSize.Y;
+        /* Only clear what is actually visible - the buffer can be much
+           taller than the window, and clearing all of it every frame is
+           far too slow for a game. */
+        origin.X = info.srWindow.Left;
+        origin.Y = info.srWindow.Top;
+
+        cells = (DWORD)(info.srWindow.Right - info.srWindow.Left + 1) *
+                (DWORD)(info.srWindow.Bottom - info.srWindow.Top + 1);
+
         FillConsoleOutputCharacterA(handle, ' ', cells, origin, &written);
         FillConsoleOutputAttribute(handle, info.wAttributes, cells, origin,
                                    &written);
@@ -113,6 +122,111 @@ void platform_clear_screen(void)
     /* ANSI clear that also works on dumb terminals. */
     printf("\x1b[2J\x1b[H");
     fflush(stdout);
+#endif
+}
+
+int platform_terminal_size(int *columns, int *rows)
+{
+    if (columns != NULL)
+        *columns = 0;
+
+    if (rows != NULL)
+        *rows = 0;
+
+#ifdef _WIN32
+    {
+        HANDLE handle = platform_stdout_handle();
+        CONSOLE_SCREEN_BUFFER_INFO info;
+
+        if (handle == NULL)
+            return 0;
+
+        if (!GetConsoleScreenBufferInfo(handle, &info))
+            return 0;
+
+        if (columns != NULL)
+            *columns = info.srWindow.Right - info.srWindow.Left + 1;
+
+        if (rows != NULL)
+            *rows = info.srWindow.Bottom - info.srWindow.Top + 1;
+
+        return 1;
+    }
+#else
+    {
+        struct winsize ws;
+
+        if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != 0)
+            return 0;
+
+        if (ws.ws_col == 0 || ws.ws_row == 0)
+            return 0;
+
+        if (columns != NULL)
+            *columns = (int)ws.ws_col;
+
+        if (rows != NULL)
+            *rows = (int)ws.ws_row;
+
+        return 1;
+    }
+#endif
+}
+
+int platform_ensure_terminal_size(int min_columns, int min_rows)
+{
+    int columns = 0;
+    int rows = 0;
+
+    if (platform_terminal_size(&columns, &rows)) {
+        if (columns >= min_columns && rows >= min_rows)
+            return 1;
+
+#ifndef _WIN32
+        /* A Linux terminal cannot be resized from inside the program. */
+        return 0;
+#endif
+    }
+
+#ifdef _WIN32
+    {
+        HANDLE handle = platform_stdout_handle();
+        CONSOLE_SCREEN_BUFFER_INFO info;
+        COORD buffer;
+        SMALL_RECT window;
+
+        /* Not a console at all (output redirected): nothing to resize. */
+        if (handle == NULL)
+            return 1;
+
+        if (!GetConsoleScreenBufferInfo(handle, &info))
+            return 1;
+
+        /* The buffer has to be at least as large as the wanted window, and
+           one row taller so the last newline can never scroll the view. */
+        buffer.X = info.dwSize.X;
+        if (buffer.X < min_columns)
+            buffer.X = (SHORT)min_columns;
+
+        buffer.Y = info.dwSize.Y;
+        if (buffer.Y < min_rows + 1)
+            buffer.Y = (SHORT)(min_rows + 1);
+
+        SetConsoleScreenBufferSize(handle, buffer);
+
+        window.Left = 0;
+        window.Top = 0;
+        window.Right = (SHORT)(min_columns - 1);
+        window.Bottom = (SHORT)(min_rows - 1);
+        SetConsoleWindowInfo(handle, TRUE, &window);
+
+        if (!platform_terminal_size(&columns, &rows))
+            return 1;
+
+        return (columns >= min_columns && rows >= min_rows);
+    }
+#else
+    return 0;
 #endif
 }
 

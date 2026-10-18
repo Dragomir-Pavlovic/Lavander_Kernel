@@ -17,6 +17,22 @@ void platform_set_color(void);
 void platform_reset_color(void);
 void platform_clear_screen(void);
 
+/*
+ * Size of the console window in characters. Returns 1 when the size is
+ * known, 0 when it cannot be determined (for example when the output is
+ * redirected to a file).
+ */
+int platform_terminal_size(int *columns, int *rows);
+
+/*
+ * Makes sure the console is at least min_columns x min_rows characters.
+ * Windows: the console window is grown when needed.
+ * Linux  : terminals cannot be resized from inside a program, so nothing
+ *          is changed there - the caller has to ask the user to resize.
+ * Returns 1 when the console is big enough, 0 when it is not.
+ */
+int platform_ensure_terminal_size(int min_columns, int min_rows);
+
 /* Blocking sleep expressed in milliseconds. */
 void platform_sleep_ms(unsigned int ms);
 
