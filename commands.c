@@ -19,6 +19,8 @@ void showHelp(void) {
     printf("█▒panic             - Turns off bash script if user or system makes an error █▒\n");
     printf("█▒bbtbs             - Bringing back user to beginning screen of bash script  █▒\n");
     printf("█▒exit              - Shutdown                                               █▒\n");
+    printf("██████████████████████████████████████████████████████████████████████████████▒\n");
+    printf("█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒\n");
     printf("█▒%-75s█▒\n", "FILE SYSTEM COMMANDS:");
     printf("█▒%-75s█▒\n", "mkdir PATH         - create a directory (a/b/c is allowed)");
     printf("█▒%-75s█▒\n", "rmdir PATH         - remove an empty directory");
@@ -31,6 +33,8 @@ void showHelp(void) {
     printf("█▒%-75s█▒\n", "write FILE TEXT    - create or overwrite a file with one line");
     printf("█▒%-75s█▒\n", "edit FILE          - open the built-in line editor");
     printf("█▒%-75s█▒\n", "mv SRC DST         - move or rename files and directories");
+    printf("██████████████████████████████████████████████████████████████████████████████▒\n");
+    printf("█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒\n");
     printf("█▒%-75s█▒\n", "GAME COMMANDS:");
     printf("█▒%-75s█▒\n", "games              - open the game selection menu");
     printf("█▒%-75s█▒\n", "snake              - play the bundled snake (lavander_games)");

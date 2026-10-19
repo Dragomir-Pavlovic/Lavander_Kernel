@@ -1,3 +1,8 @@
+/*
+* This is monitor screen that represents, in this case, something similar to fastfatch on linux systems
+* and system info on windows. Now, I, Dragomir Pavlovic, didn't use widnows for more that 2 years so I
+* forgot how is this function called, i think it is called specs but if nothings, well it show specs. 
+*/
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
