@@ -19,14 +19,14 @@ void bootScreen(void) {
 
 void loadingScreen(void) {
     int i;
-
+    system("ffplay -nodisp -autoexit -loglevel quiet booting_sound.mp3 &");
     clearScreen();
     setColor();
     printf("\n\n");
     printf(" █████████████████████████████████████\n");
     printf(" █▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒\n");
     printf(" █▒                                  █▒\n");
-    printf(" █▒   ## -- LAVANDER KERNEL -- ##    █▒\n");
+    printf(" █▒      -- LAVANDER KERNEL --       █▒\n");
     printf(" █▒                                  █▒\n");
     printf(" █████████████████████████████████████▒\n");
     printf("  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n\n");
@@ -34,12 +34,12 @@ void loadingScreen(void) {
     fflush(stdout);
 
     for (i = 0; i < 5; i++) {
-        platform_sleep_ms(400);
+        platform_sleep_ms(1000);
         printf(".");
         fflush(stdout);
     }
 
     printf("\n");
-    platform_sleep_ms(300);
+    platform_sleep_ms(1000);
     resetColor();
 }

@@ -96,12 +96,41 @@ void process_command(const char *input, int *running) {
         shell_interface();
     }
     else if (strcmp(input, "panic") == 0) {
+         for (int i = 0; i < 5; i++) {
+        platform_sleep_ms(1600);
+        printf(".");
+        fflush(stdout);
+    }
+
+    printf("\n");
+    platform_sleep_ms(1600);
+    resetColor();
         clearScreen();
         BSP();
     }
     else if (strcmp(input, "exit") == 0 || strcmp(input, "leave") == 0) {
+        
+        system("ffplay -nodisp -autoexit -loglevel quiet turning_off_sound.mp3 &");
         clearScreen();
         setColor();
+        printf("███████████████████████████████████████████████████████\n");
+        printf("█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒\n");
+        printf("█▒                                                    █▒\n");  
+        printf("█▒ Exiting                                            █▒\n");
+        printf("█▒ Thank you for using Lavander kernel                █▒\n");
+        printf("█▒ Have a wonderful rest of the day                   █▒\n");
+        printf("█▒                                                    █▒\n");
+        printf("███████████████████████████████████████████████████████▒\n");
+        printf(" ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n");
+        for (int i = 0; i < 5; i++) {
+        platform_sleep_ms(1000);
+        printf("");
+        fflush(stdout);
+    }
+
+    printf("\n");
+    platform_sleep_ms(1000);
+    resetColor();
         printf("Exiting Kernel\n");
         printf("Or stopping it for safety reasons\n");
         *running = 0;

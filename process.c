@@ -3,8 +3,8 @@
 #include <string.h>
 #include "config.h"
 #include "platform.h"
-#include "snake_game.h"
-#include "tetris_game.h"
+#include "games/snake_game.h"
+#include "games/tetris_game.h"
 
 /*
  * Starts a bundled game that ships with the build. The games live in the
