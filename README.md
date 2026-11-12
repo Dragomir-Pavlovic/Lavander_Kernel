@@ -1,9 +1,7 @@
-# Lavander_Shell_and_SLM
-Bash shell script that run several things, one of them is SLM (Small learning model) that can chat with you, and speak in 16-bit voice
+# Lavander kernel simulation for Linux and Windows based mashines
 
-Bash shell is writen in C language and SLM in python. Bought can be run as a terminal command. Running pyscript for SLM opens a tiny window, where SLM model lives. It can be also embedded in raspberry pi.
-
-Enjoy using it.
+** Lavander kernel script is build for Linux and Windows based mashines to simulate kernel based on Unix.
+** Simulation run's like early Unix version 1 to 4 (Research Unix System build for local mashines inside MIT Bell lab)
 
 ## Supported platforms
 
@@ -17,7 +15,7 @@ from the same source code. All operating system specific code lives in one file,
 | Clear screen           | ANSI                          | Win32 console buffer                 |
 | Sleep / timing         | `usleep`                      | `Sleep`                              |
 | Keyboard (games)       | `termios`                     | `_kbhit` / `_getch`                  |
-| OS name                | `/etc/os-release`             | Registry (`ProductName`)             |
+| Kernel name            | `/etc/os-release`             | Registry (`ProductName`)             |
 | Kernel version         | `uname`                       | `RtlGetVersion`                      |
 | Architecture           | `uname -m`                    | `GetNativeSystemInfo`                |
 | CPU model              | `/proc/cpuinfo`               | Registry (`ProcessorNameString`)     |
@@ -27,10 +25,13 @@ from the same source code. All operating system specific code lives in one file,
 On Windows the console is switched to UTF-8 at startup, so the box drawing and
 block characters of the menus and of the bundled games render correctly.
 
+For now kernel shows specifications of already installed system that runs outside Lavander kernel sandbox.
+
 ## Building the kernel
 
-The build produces **two programs**: the kernel itself and the bundled snake
-game, which lands in a `lavander_games` directory:
+The build produces **few programs**: the kernel itself with system information with help and manual as one
+and the bundled games, snake and tetris.
+Games, which lands in a `lavander_games` directory:
 
 | Program                | Linux                          | Windows                          |
 | ---------------------- | ------------------------------ | -------------------------------- |
@@ -38,7 +39,7 @@ game, which lands in a `lavander_games` directory:
 | the bundled snake      | `lavander_games/snake.game`    | `lavander_games\snake.game.exe`  |
 | the bundled tetris     | `lavander_games/tetris.game`   | `lavander_games\tetris.game.exe` |
 
-### Linux
+### Linux running process from terminal
 
 ```sh
 make            # builds ./lavander and both games in lavander_games/
@@ -80,6 +81,7 @@ separate program.
 Note: `shell.c` is the old single file version of the project, kept only as a
 reference. It is disabled by default (its `#if 0` block) so it can never clash
 with the modular sources; enable it only to build it standalone.
+Not recommended if you want fresh out of the box experience with Lavander kernel sandbox.
 
 ## File system commands
 
@@ -90,10 +92,14 @@ which is that directory - you can go as deep as you want (`dir` inside `dir`
 inside `dir`) but you can never escape the sandbox, so the same commands behave
 identically on Linux and Windows.
 
+Note: Be careful, some of the commands, if not used properly can make mistake and brake system.
+read whole this Readme.txt file and read manual used as 'man' command and help used as 'help'
+command properly so you wont have any mistakes and have full understanding of program and how to run it.
+
 | Command             | What it does                                              |
 | ------------------- | --------------------------------------------------------- |
 | `pwd`               | prints the directory you are in (`/` at the root)         |
-| `ls` / `dir [PATH]` | lists a directory (`[DIR]` / `[FILE]`, sorted, with sizes) |
+| `ls` / `dir [PATH]` | lists a directory (`[DIR]` / `[FILE]`, sorted, with sizes)|
 | `mkdir PATH`        | creates a directory, nested paths allowed (`a/b/c`)       |
 | `rmdir PATH`        | removes an **empty** directory                            |
 | `rm PATH`           | deletes a file                                            |
@@ -113,6 +119,10 @@ contain spaces: `cat "my notes.txt"`.
 
 ### The editor
 
+Note: For now this is simple short text editor that function as a simulation of real editor.
+Right now it is in process of making VIM like text editor.
+Note: CORE-16 is from previous build that runs simulation of 16-BIT processor and it stuck still.
+We wont change it, its part of our inside joke and also part of old, first ever build of this project.
 ```
 CORE-16] >> edit docs/notes.txt
  ----------------------------------------------------------
@@ -152,7 +162,7 @@ rm -r projects                  # delete the whole tree
 
 The build ships two classic terminal games as separate programs, in the
 default `lavander_games` directory:
-
+Note: Games wont run outside games file.
 ```
 lavander_games/
     snake.game      tetris.game          Linux
@@ -164,12 +174,14 @@ They only depend on the portability layer (`platform.c`), so the same sources
 
 ### Starting them
 
-| Where                    | What to do                                             |
-| ------------------------ | ------------------------------------------------------ |
-| from the kernel shell    | type `snake` or `tetris` (it starts `lavander_games/...` for you) |
-| from the games menu      | type `games`, then `1` for tetris or `2` for snake     |
+| Where                    | What to do                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------ |
+| from the kernel shell    | type `snake` or `tetris` (it starts `lavander_games/...` for you)              |
+| from the games menu      | type `games`, then `1` for tetris or 'tetris' and `2` for snake of 'snake'     |
 | on its own, Windows      | `lavander_games\tetris.game.exe` (in PowerShell: `lavander_games\tetris.game`) |
-| on its own, Linux        | `./lavander_games/snake.game`                          |
+| on its own, Linux        | `./lavander_games/snake.game`                                                  |
+
+*** user@linuxmint: System: Wildbound removed, do not question it.
 
 `pake` still works as a command: it now starts the snake game, because the old
 pake penguin game was removed and replaced by it.
@@ -265,13 +277,8 @@ console of at least **36 x 23** characters (tetris) or **36 x 20** (snake):
 Everything (score, level, next piece, controls) is kept beside the board in
 short columns for exactly this reason - one long header line would break the
 whole picture in a small window.
-
-
-## The SLM (Python)
-
-```sh
-python littlepenguin.py
 ```
+
 
 Requires `tkinter` and `pillow`. It is written with portable APIs only
 (`tkinter`, `PIL`, `os.path`), so it works on Linux and Windows unchanged.
